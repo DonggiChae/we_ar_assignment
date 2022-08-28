@@ -1,6 +1,8 @@
 #WE_AR 과제
+
 ## 과제 결과 (CODEPEN) 
 [CODEPEN](https://codepen.io/donggichae/pen/qBozXxz).
+
 ## 과제의 주요 목표
 
 - [x] 캔버스 사이즈는 가로 1000, 세로 500 고정입니다.

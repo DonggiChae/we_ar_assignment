@@ -195,11 +195,7 @@ const collisionVector = (particle1: Ball, particle2: Ball) => {
     );
 };
 
-const runAnimation = (animation: (time: number) => void) => {
-  let lastTime: number | null  = null;
-  let stop = false;
-  let frameCount = 0;
-  let fps = 30;
+const runAnimation = (animation: (time: number) => void, fps: number) => {
   let startTime;
   let now = 0;
   let then = 0;
@@ -235,7 +231,11 @@ function plusOrMinus() {
 }
 
 
-const collidingBalls = ({ width = 1000, height = 500, parent = document.querySelector("canvas"), count = random(20, 10) } = {}) => {
+const collidingBalls = ({ width = 1000, 
+  height = 500, 
+  parent = document.querySelector("canvas"), 
+  count = random(20, 10),
+} = {}, fps: number) => {
   const display = new Canvas(parent as HTMLCanvasElement, width, height);
   const balls = [];
   for (let i = 0; i <= count; i++) {
@@ -243,14 +243,16 @@ const collidingBalls = ({ width = 1000, height = 500, parent = document.querySel
       radius: random(20, 10),
       color: "black",
       position: new Vector(random(width - 10, 10), random(height - 10, 10)),
-      velocity: new Vector(plusOrMinus() * random(2, 4), plusOrMinus() * random(2, -4)),
-    }));
+      velocity: new Vector(plusOrMinus()* Math.random() * random(2, 4) * 100 / fps, 
+      plusOrMinus() * Math.random() * random(4,2) * 100 / fps),
+    })
+    );
   }
   let state = new State(display, balls);
   runAnimation((time : number) => {
     state = state.update(time);
     display.sync(state);
-  });
+  }, fps);
 };
 
-collidingBalls();
+collidingBalls({}, 60);

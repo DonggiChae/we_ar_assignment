@@ -14,11 +14,6 @@ class State {
 
   update(time: number) {
 
-    /**
-     * provide an update ID to let actors 
-     * update other actors only once.
-     * used with collision detection.
-     */
     const updateId = Math.floor(Math.random() * 1000000);
     const actors = this.actors.map(actor => {
       return actor.update(this, time, updateId);
@@ -141,33 +136,22 @@ class Ball {
 
   update(state: IState, time: number, updateId: number) {
 
-    /**
-     * if slice occurs on too many elements, it starts to lag
-     * collisions is an array to allow multiple collisions at once
-     */
     if (this.collisions.length > 10) {
       this.collisions = this.collisions.slice(this.collisions.length - 3);
     }
 
-    /**
-     * this is the most stable solution to avoid overlap
-     * but it is slightly inaccurate
-     */
+
     for (let actor of state.actors) {
       if (this === actor || this.collisions.includes(actor.id + updateId)) {
         continue;
       }
-
-      /**
-       * check if actors collide in the next frame and update now if they do
-       * innaccurate, but it is the easiest solution to the sticky collision bug
-       */
       const distance = this.position.add(this.velocity).subtract(actor.position.add(actor.velocity)).magnitude;
       const distanceCenterToCenter = this.position.subtract(actor.position).magnitude;
       
       if (distanceCenterToCenter < this.radius + actor.radius) {
-          this.position = this.position.subtract(this.position.subtract(actor.position))
-      }else if (distance <= this.radius + actor.radius) {
+        this.position = this.position.add(this.position.add(actor.position))
+      }
+      if (distance <= this.radius + actor.radius) {
         const v1 = collisionVector(this, actor);
         const v2 = collisionVector(actor, this);
         this.velocity = v1;
@@ -177,7 +161,6 @@ class Ball {
       }
     }
     
-    // setting bounds on the canvas prevents balls from overlapping on update
     const upperLimit = new Vector(state.display.canvas.width - this.radius, state.display.canvas.height - this.radius);
     const lowerLimit = new Vector(0 + this.radius, 0 + this.radius);
 
@@ -199,7 +182,7 @@ class Ball {
   }
 }
 
-// see elastic collision: https://en.wikipedia.org/wiki/Elastic_collision
+// elastic collision: https://en.wikipedia.org/wiki/Elastic_collision
 const collisionVector = (particle1: Ball, particle2: Ball) => {
   return particle1.velocity
     .subtract(particle1.position
@@ -214,22 +197,42 @@ const collisionVector = (particle1: Ball, particle2: Ball) => {
 
 const runAnimation = (animation: (time: number) => void) => {
   let lastTime: number | null  = null;
-  const frame = (time: number) => {
-    if (lastTime !== null) {
-      const timeStep = Math.min(100, time - lastTime) / 1000;
-      if (animation(timeStep) !== undefined) {
+  let stop = false;
+  let frameCount = 0;
+  let fps = 30;
+  let startTime;
+  let now = 0;
+  let then = 0;
+  let elapsed = 0; 
+  let fpsInterval = 1000 / fps;
+  then = Date.now();
+  startTime = then;
+
+  const frame = (startTime: number) => {
+    now = Date.now();
+    elapsed = now - then;
+    if (elapsed > fpsInterval) {
+      then = now - (elapsed % fpsInterval);
+      if (animation(then) !== undefined) {
         return;
       }
-    }
-    lastTime = time;
-    requestAnimationFrame(frame);
   };
   requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
 };
+
 
 function random(max = 20, min = 10){
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
+
+function plusOrMinus() {
+  const myArray = [1, -1];
+  let rand = Math.floor(Math.random()*myArray.length);
+  let rValue = myArray[rand];
+  return rValue
+}
 
 
 const collidingBalls = ({ width = 1000, height = 500, parent = document.querySelector("canvas"), count = random(20, 10) } = {}) => {
@@ -240,7 +243,7 @@ const collidingBalls = ({ width = 1000, height = 500, parent = document.querySel
       radius: random(20, 10),
       color: "black",
       position: new Vector(random(width - 10, 10), random(height - 10, 10)),
-      velocity: new Vector(random(3, -3), random(3, -3)),
+      velocity: new Vector(plusOrMinus() * random(2, 4), plusOrMinus() * random(2, -4)),
     }));
   }
   let state = new State(display, balls);

@@ -70,6 +70,8 @@ distanceCenterToCenter 변수는 처음 공이 생성될 때 겹쳐서 생성되
 requestAnimationFrame을 사용하였습니다. 그러나 프레임 단위로 화면을 보여주기 떄문에 화면의 프레임에 따라 결과가 달라지는 것을 확인할 수 있었습니다.
 이를 방지하기 위해서 Throttle울 사용하여 어느 상황에서도 같은 결과를 나타내도록 하였습니다.
 
+ - 블로그 정리
+  [Blog](https://medium.com/@chaedonggi/web-requestanimationframe-9e933fabce57)
 
 - [x] `HTMLCanvasElement`를 사용하여 화면을 구현하세요.
 

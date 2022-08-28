@@ -3,6 +3,8 @@
 ## 과제 결과 (CODEPEN) 
 [CODEPEN](https://codepen.io/donggichae/pen/qBozXxz).
 
+![codepan_Ipad](https://user-images.githubusercontent.com/69336797/187092038-8c402008-e3db-41db-b2b1-90f85c01dcda.gif)
+
 ## 과제의 주요 목표
 
 - [x] 캔버스 사이즈는 가로 1000, 세로 500 고정입니다.
